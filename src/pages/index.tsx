@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import React from "react";
+import React, { useRef } from "react";
 import Layout from "~/components/layouts/main.layout";
 import Image from "next/image";
 import { Heart, MessageSquare, Repeat } from "lucide-react";
@@ -83,7 +83,7 @@ const Home: NextPage = () => {
 			<Layout>
 				<Composer />
 				<hr className="border-white/50" />
-				<div className="flex max-h-full flex-col overflow-scroll">
+				<div className="flex max-h-full flex-col overflow-x-scroll scroll-smooth">
 					{mockPost.map((item) => {
 						return (
 							<div
@@ -101,29 +101,28 @@ const Home: NextPage = () => {
 										/>
 									</div>
 									<div className="flex grow flex-col">
-										<span className="text-md text-semibold text-white drop-shadow-sm">
-											{item.user}
+										<span className="text-semibold my-1 text-xl text-white drop-shadow-sm">
+											@ {item.user}
 										</span>
 										<div className="text-white drop-shadow-md">
 											{item.content}
 										</div>
-										<div className="mt-2 flex flex-row justify-around">
-											<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-												<MessageSquare size={20} />
-												{item.likeCount}
-											</span>
-											<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-												<Repeat size={20} />
-												{item.repostCount}
-											</span>
-											<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-												<Heart size={20} />
-												{item.likeCount}
-											</span>
-										</div>
 									</div>
 								</div>
-								{/* <hr className="border-white/40 py-4" /> */}
+								<div className="mt-2 flex flex-row justify-around">
+									<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+										<MessageSquare size={20} />
+										{item.likeCount}
+									</span>
+									<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+										<Repeat size={20} />
+										{item.repostCount}
+									</span>
+									<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+										<Heart size={20} />
+										{item.likeCount}
+									</span>
+								</div>
 							</div>
 						);
 					})}
@@ -134,17 +133,24 @@ const Home: NextPage = () => {
 };
 
 const Composer = () => {
+	const ref = useRef<HTMLDivElement>(null);
+
+	const focusHandler = () => {
+		setTimeout(() => {
+			if (ref.current) ref.current.focus();
+		}, 0);
+	};
+
 	return (
-		<div className="mt-4 flex h-40 flex-col rounded-lg p-4">
-			{/* <span className="pl-2 text-lg">Post</span> */}
-			{/* <hr className="mb-2 border-white/50" /> */}
+		<div className="group flex h-40 flex-col p-4 transition-all hover:bg-white/20">
 			<div
 				contentEditable
 				placeholder="New Post"
 				className="w-full grow outline-none"
+				ref={ref}
 			></div>
-			<div className="shirnk-0">
-				<button className="float-right rounded-lg bg-white/50 p-2 capitalize text-black/40 drop-shadow-lg transition-all hover:bg-white/80 hover:text-black/60 hover:drop-shadow-xl">
+			<div className="shirnk-0 cursor-text" onClick={focusHandler}>
+				<button className="float-right rounded-lg bg-white/50 p-2 capitalize text-black/40 drop-shadow-lg transition-all hover:bg-white/80 hover:text-black/60 hover:drop-shadow-xl group-focus-within:bg-white/70 group-focus-within:text-black/60">
 					post
 				</button>
 			</div>

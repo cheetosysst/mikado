@@ -120,7 +120,7 @@ export const GlassBase = ({
 	className?: string;
 }) => (
 	<div
-		className={`rounded-xl border-[1px] border-white/10 bg-white/10 text-white drop-shadow-lg backdrop-blur-sm backdrop-saturate-[1.4] transition-all hover:drop-shadow-xl hover:backdrop-saturate-[1.5] ${
+		className={`rounded-xl border-[1px] border-white/10 bg-white/10 text-white drop-shadow-lg backdrop-blur-sm backdrop-saturate-[1.2] transition-all hover:drop-shadow-xl hover:backdrop-saturate-[1.3] ${
 			className ? className : ""
 		}`}
 	>
