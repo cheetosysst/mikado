@@ -1,18 +1,14 @@
-# Create T3 App
+# Mikado
+
+Mikado is a minimal twitter-like social media website. It is not intended for production use at the moment.
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
+Mikado is named after [mikado pheasant](https://en.wikipedia.org/wiki/Mikado_pheasant).
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## What is it for?
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+This is not meant to be used for production use, but I want to implement most common twitter features lie tweet, retweet, like, and follow.
 
 ## Learn More
 
