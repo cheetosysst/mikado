@@ -3,15 +3,17 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 import "~/styles/globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+import type { AppProps } from "next/app";
 
 const MyApp: AppType<{ session: Session | null }> = ({
 	Component,
-	pageProps: { session, ...pageProps },
-}) => {
+	pageProps,
+}: AppProps) => {
 	return (
-		<SessionProvider session={session}>
+		<ClerkProvider {...pageProps}>
 			<Component {...pageProps} />
-		</SessionProvider>
+		</ClerkProvider>
 	);
 };
 

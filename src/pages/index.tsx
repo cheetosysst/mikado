@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import Layout from "~/components/layouts/main.layout";
 import Image from "next/image";
 import { Heart, MessageSquare, Repeat } from "lucide-react";
+import { api } from "~/utils/api";
 
 type PostItem = {
 	user: string;
@@ -73,6 +74,8 @@ const mockPost: Array<PostItem> = [
 ];
 
 const Home: NextPage = () => {
+	const data = api.example.hello.useQuery({ text: "pppp" });
+	console.log(data.data?.greeting);
 	return (
 		<>
 			<Head>
@@ -84,10 +87,10 @@ const Home: NextPage = () => {
 				<Composer />
 				<hr className="border-white/50" />
 				<div className="flex max-h-full flex-col overflow-x-scroll scroll-smooth">
-					{mockPost.map((item) => {
+					{mockPost.map((item, index) => {
 						return (
 							<div
-								key={`post-${item.id}`}
+								key={`post-${item.id}-${index}`}
 								className="py-4 drop-shadow-md transition-all hover:drop-shadow-lg"
 							>
 								<div className="flex gap-2 px-6">
