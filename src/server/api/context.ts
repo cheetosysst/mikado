@@ -11,17 +11,15 @@ interface AuthContext {
 	auth: SignedInAuthObject | SignedOutAuthObject;
 }
 
-export const createContextInner = async ({ auth }: AuthContext) => {
+export const createContextInner = ({ auth }: AuthContext) => {
 	return {
 		auth,
 		prisma,
 	};
 };
 
-export const createContext = async (
-	opts: trpcNext.CreateNextContextOptions
-) => {
-	return await createContextInner({ auth: getAuth(opts.req) });
+export const createContext = (opts: trpcNext.CreateNextContextOptions) => {
+	return createContextInner({ auth: getAuth(opts.req) });
 };
 
 export type Context = trpc.inferAsyncReturnType<typeof createContext>;
