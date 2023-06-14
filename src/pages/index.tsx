@@ -74,8 +74,9 @@ const mockPost: Array<PostItem> = [
 ];
 
 const Home: NextPage = () => {
-	const data = api.example.hello.useQuery({ text: "pppp" });
-	console.log(data.data?.greeting);
+	const data = api.example.private.useQuery();
+	console.log(data.data);
+
 	return (
 		<>
 			<Head>
