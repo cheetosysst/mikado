@@ -36,6 +36,7 @@ export const tweetAPI = createTRPCRouter({
 						},
 					},
 				},
+				take: 100,
 				orderBy: {
 					time: "desc",
 				},
