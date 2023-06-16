@@ -5,77 +5,12 @@ import Layout from "~/components/layouts/main.layout";
 import Image from "next/image";
 import { Heart, MessageSquare, Repeat } from "lucide-react";
 import { api } from "~/utils/api";
-
-type PostItem = {
-	user: string;
-	content: string;
-	likeCount: number;
-	id: string;
-	repostCount: number;
-};
-
-const mockPost: Array<PostItem> = [
-	{
-		user: "thect36",
-		content:
-			"Commodo Lorem proident laborum reprehenderit aute nisi tempor aute do ddunt proident do id. Elit do pariatur consectetur aliqua reprehenderit ad.",
-		likeCount: 64,
-		id: "dafdasfasfsad",
-		repostCount: 5,
-	},
-	{
-		user: "thect36",
-		content:
-			"Nulla enim cillum officia veniam esse ut labore mollit do do ea occaecat excepteur. Non aliqua eu cillum id sint enim voluptate tempor quis sit elit. Aute magna aliquip consectetur amet consequat et ea nostrud duis laboris. niam in in id amet culpa. Sint sint Lorem occaecat voluptate labore.",
-		likeCount: 34,
-		id: "afdsfds",
-		repostCount: 5,
-	},
-	{
-		user: "thect36",
-		content:
-			"In fugiat deserunt ex culpa ex consequat culpa occaecat. Occaecat cupidatat sunt adipisicing proident. Eiusmod amet sunt Lorem cupidatat adipisicing culpa ea qui laborum voluptate officia.",
-		likeCount: 432,
-		id: "adfasdf",
-		repostCount: 5,
-	},
-	{
-		user: "thect36",
-		content:
-			"Nulla ut anim eu cillum. Aliquip et deserunt reprehenderit nulla id nisi sit id. Laborum minim quis aliquip adipisicing eiusmod ad nisi velit voluptate amet quis.",
-		likeCount: 612,
-		id: "fsdafadsdf",
-		repostCount: 5,
-	},
-	{
-		user: "thect36",
-		content:
-			"Elit amet mollit minim ut mollit non adipisicing tempor consequat non ipsum. Occaecat id non sunt qui amet reprehenderit ",
-		likeCount: 4,
-		id: "fsdfdasf",
-		repostCount: 5,
-	},
-	{
-		user: "thect36",
-		content:
-			"Veniam duis laborum enim nisi magna. Reprehenderit deserunt duis nisi cillum pariatur nisi. Reprehenderit excepteur do voluptate veniam sunt nisi.",
-		likeCount: 324,
-		id: "fasdfsafsa",
-		repostCount: 5,
-	},
-	{
-		user: "thect36",
-		content:
-			"Labore consequat exercitation ad sint tempor. Pariatur officia fugiat anim amet velit pariatur culpa. Consequat pariatur ut occaecat Lorem exercitation ipsum.",
-		likeCount: 0,
-		id: "adfsaffsad",
-		repostCount: 5,
-	},
-];
+import { useUser } from "@clerk/nextjs";
+import type { TweetData } from "~/server/api/routers/tweet";
 
 const Home: NextPage = () => {
-	const data = api.example.private.useQuery();
-	console.log(data.data);
+	const tweetList: TweetData[] | undefined =
+		api.tweet.getTweets.useQuery().data;
 
 	return (
 		<>
@@ -88,61 +23,82 @@ const Home: NextPage = () => {
 				<Composer />
 				<hr className="border-white/50" />
 				<div className="flex max-h-full flex-col overflow-x-scroll scroll-smooth">
-					{mockPost.map((item, index) => {
-						return (
-							<div
+					{tweetList &&
+						tweetList?.map((item, index) => (
+							<TweetItem
+								data={item}
 								key={`post-${item.id}-${index}`}
-								className="py-4 drop-shadow-md transition-all hover:drop-shadow-lg"
-							>
-								<div className="flex gap-2 px-6">
-									<div className="shrink-0 ">
-										<Image
-											src={`/user.jpg`}
-											width={42}
-											height={42}
-											className="rounded-full drop-shadow-md"
-											alt="user avatar"
-										/>
-									</div>
-									<div className="flex grow flex-col">
-										<span className="text-semibold my-1 text-xl text-white drop-shadow-sm">
-											@ {item.user}
-										</span>
-										<div className="text-white drop-shadow-md">
-											{item.content}
-										</div>
-									</div>
-								</div>
-								<div className="mt-2 flex flex-row justify-around">
-									<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-										<MessageSquare size={20} />
-										{item.likeCount}
-									</span>
-									<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-										<Repeat size={20} />
-										{item.repostCount}
-									</span>
-									<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-										<Heart size={20} />
-										{item.likeCount}
-									</span>
-								</div>
-							</div>
-						);
-					})}
+							/>
+						))}
 				</div>
 			</Layout>
 		</>
 	);
 };
 
+const TweetItem = ({ data }: { data: TweetData }) => (
+	<div className="py-4 drop-shadow-md transition-all hover:drop-shadow-lg">
+		<div className="flex gap-2 px-6">
+			<div className="shrink-0 ">
+				<Image
+					src={data.avatar || `/user.jpg`}
+					width={42}
+					height={42}
+					className="rounded-full drop-shadow-md"
+					alt="user avatar"
+				/>
+			</div>
+			<div className="flex grow flex-col">
+				<span className="text-semibold my-1 text-xl text-white drop-shadow-sm">
+					@ {data.user}
+				</span>
+				<div className="text-white drop-shadow-md">
+					{data.content?.content}
+				</div>
+			</div>
+		</div>
+		<div className="mt-2 flex flex-row justify-around">
+			<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+				<MessageSquare size={20} />
+				{data._count.children}
+			</span>
+			<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+				<Repeat size={20} />
+				{/* {data.repostCount} */}0
+			</span>
+			<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+				<Heart size={20} />
+				{data._count.likes}
+			</span>
+		</div>
+	</div>
+);
+
 const Composer = () => {
 	const ref = useRef<HTMLDivElement>(null);
+	const { isLoaded, isSignedIn, user } = useUser();
+	const tweetMutation = api.tweet.newPost.useMutation();
 
 	const focusHandler = () => {
 		setTimeout(() => {
 			if (ref.current) ref.current.focus();
 		}, 0);
+	};
+
+	const submitPost = () => {
+		if (!isLoaded || !isSignedIn || ref.current?.innerText === undefined)
+			return;
+
+		const content = ref.current.innerText;
+
+		tweetMutation.mutate({
+			user: user.id,
+			content: content,
+		});
+
+		ref.current.innerText = "";
+
+		return;
 	};
 
 	return (
@@ -154,7 +110,10 @@ const Composer = () => {
 				ref={ref}
 			></div>
 			<div className="shirnk-0 cursor-text" onClick={focusHandler}>
-				<button className="float-right rounded-lg bg-white/50 p-2 capitalize text-black/40 drop-shadow-lg transition-all hover:bg-white/80 hover:text-black/60 hover:drop-shadow-xl group-focus-within:bg-white/70 group-focus-within:text-black/60">
+				<button
+					onClick={submitPost}
+					className="float-right rounded-lg bg-white/50 p-2 capitalize text-black/40 drop-shadow-lg transition-all hover:bg-white/80 hover:text-black/60 hover:drop-shadow-xl group-focus-within:bg-white/70 group-focus-within:text-black/60"
+				>
 					post
 				</button>
 			</div>
