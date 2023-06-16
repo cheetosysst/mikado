@@ -7,10 +7,12 @@ import { Heart, MessageSquare, Repeat } from "lucide-react";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 import type { TweetData } from "~/server/api/routers/tweet";
+import Link from "next/link";
 
 const Home: NextPage = () => {
-	const tweetList: TweetData[] | undefined =
-		api.tweet.getTweets.useQuery().data;
+	const tweetList: TweetData[] | undefined = api.tweet.getTweets.useQuery(
+		{}
+	).data;
 
 	return (
 		<>
@@ -36,43 +38,59 @@ const Home: NextPage = () => {
 	);
 };
 
-const TweetItem = ({ data }: { data: TweetData }) => (
-	<div className="py-4 drop-shadow-md transition-all hover:drop-shadow-lg">
-		<div className="flex gap-2 px-6">
-			<div className="shrink-0 ">
-				<Image
-					src={data.avatar || `/user.jpg`}
-					width={42}
-					height={42}
-					className="rounded-full drop-shadow-md"
-					alt="user avatar"
-				/>
-			</div>
-			<div className="flex grow flex-col">
-				<span className="text-semibold my-1 text-xl text-white drop-shadow-sm">
-					@ {data.user}
-				</span>
-				<div className="text-white drop-shadow-md">
-					{data.content?.content}
+const TweetItem = ({ data }: { data: TweetData }) => {
+	const likeMutation = api.tweet.toggleLike.useMutation();
+
+	const toggleLike = () => {
+		likeMutation.mutate({
+			user: data.user,
+			tweet: data.id,
+		});
+	};
+
+	return (
+		<div className="py-4 drop-shadow-md transition-all hover:drop-shadow-lg">
+			<div className="flex gap-2 px-6">
+				<div className="shrink-0 ">
+					<Image
+						src={data.avatar || `/user.jpg`}
+						width={42}
+						height={42}
+						className="rounded-full drop-shadow-md"
+						alt="user avatar"
+					/>
+				</div>
+				<div className="flex grow flex-col">
+					<span className="text-semibold my-1 text-xl text-white drop-shadow-sm">
+						@ {data.user}
+					</span>
+					<div className="text-white drop-shadow-md">
+						{data.content?.content}
+					</div>
 				</div>
 			</div>
+			<div className="mt-2 flex flex-row justify-around">
+				<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+					<MessageSquare size={20} />
+					{data._count.children}
+				</span>
+				<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+					<Repeat size={20} />
+					{/* {data.repostCount} */}0
+				</span>
+				<Link href={"#"} onClick={toggleLike}>
+					<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+						<Heart
+							size={20}
+							color={data.likes.length ? "#FF0000dd" : "#FFF"}
+						/>
+						{data._count.likes}
+					</span>
+				</Link>
+			</div>
 		</div>
-		<div className="mt-2 flex flex-row justify-around">
-			<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-				<MessageSquare size={20} />
-				{data._count.children}
-			</span>
-			<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-				<Repeat size={20} />
-				{/* {data.repostCount} */}0
-			</span>
-			<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-				<Heart size={20} />
-				{data._count.likes}
-			</span>
-		</div>
-	</div>
-);
+	);
+};
 
 const Composer = () => {
 	const ref = useRef<HTMLDivElement>(null);
