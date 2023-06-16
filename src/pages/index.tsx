@@ -85,6 +85,7 @@ const TweetItem = ({ data }: { data: TweetData }) => {
 					<Repeat size={20} />
 					{/* {data.repostCount} */}0
 				</span>
+				{/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
 				<Link href={"#"} onClick={toggleLike}>
 					<span className="group flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white group-hover:drop-shadow-lg">
 						<Heart
