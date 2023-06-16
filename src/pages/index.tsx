@@ -102,7 +102,7 @@ const Composer = () => {
 	};
 
 	return (
-		<div className="group flex h-40 flex-col p-4 transition-all hover:bg-white/20">
+		<div className="h-min-40 group flex flex-col p-4 transition-all hover:bg-white/20">
 			<div
 				contentEditable
 				placeholder="New Post"
