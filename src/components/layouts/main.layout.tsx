@@ -46,7 +46,7 @@ const Layout = ({ children }: { children?: ReactNode }) => (
 				<NavLink name="logout" icon={<LogOut size={32} />} href="" />
 			</div>
 		</div>
-		<GlassBase className="my-4 max-h-screen w-3/5 grow overflow-hidden lg:w-1/3 lg:grow-0">
+		<GlassBase className="my-4 max-h-screen w-3/5 grow overflow-hidden pb-24 lg:w-1/3 lg:grow-0">
 			{children}
 		</GlassBase>
 		<div className="mt-4 hidden w-14 grow flex-col gap-4 lg:flex">

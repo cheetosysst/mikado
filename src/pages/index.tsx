@@ -24,7 +24,7 @@ const Home: NextPage = () => {
 			<Layout>
 				<Composer />
 				<hr className="border-white/50" />
-				<div className="flex max-h-full flex-col overflow-x-scroll scroll-smooth">
+				<div className="flex max-h-full flex-col overflow-x-hidden overflow-y-scroll scroll-smooth">
 					{tweetList &&
 						tweetList?.map((item, index) => (
 							<TweetItem
@@ -79,10 +79,14 @@ const TweetItem = ({ data }: { data: TweetData }) => {
 					{/* {data.repostCount} */}0
 				</span>
 				<Link href={"#"} onClick={toggleLike}>
-					<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
+					<span className="group flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white group-hover:drop-shadow-lg">
 						<Heart
+							className={`transition-all ${
+								data.likes.length
+									? "text-red-600 group-hover:text-red-500"
+									: "text-white/70 group-hover:text-white"
+							}`}
 							size={20}
-							color={data.likes.length ? "#FF0000dd" : "#FFF"}
 						/>
 						{data._count.likes}
 					</span>
