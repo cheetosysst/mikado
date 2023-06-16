@@ -14,7 +14,6 @@ export type TweetData = Tweet & {
 		children: number;
 	};
 	avatar?: string;
-	likes: TweetLike[];
 };
 
 export const tweetAPI = createTRPCRouter({
@@ -28,11 +27,6 @@ export const tweetAPI = createTRPCRouter({
 						select: {
 							likes: true,
 							children: true,
-						},
-					},
-					likes: {
-						where: {
-							tweetId: input.user,
 						},
 					},
 				},

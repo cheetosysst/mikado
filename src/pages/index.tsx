@@ -10,9 +10,10 @@ import type { TweetData } from "~/server/api/routers/tweet";
 import Link from "next/link";
 
 const Home: NextPage = () => {
-	const tweetList: TweetData[] | undefined = api.tweet.getTweets.useQuery(
-		{}
-	).data;
+	const { user } = useUser();
+	const tweetList: TweetData[] | undefined = api.tweet.getTweets.useQuery({
+		user: user?.id || "",
+	}).data;
 
 	return (
 		<>
@@ -41,10 +42,18 @@ const Home: NextPage = () => {
 const TweetItem = ({ data }: { data: TweetData }) => {
 	const likeMutation = api.tweet.toggleLike.useMutation();
 	const { user } = useUser();
+	const likeQuery = api.tweet.likeState.useQuery({
+		user: user?.id || "",
+		tweet: data.id,
+	});
 
 	// TODO change to reducer
-	const [liked, setLiked] = useState(data.likes.length > 0);
-	const [likeCount, setLikeCount] = useState(data.likes.length);
+	const [liked, setLiked] = useState(likeQuery.data && likeQuery.data > 0);
+	const [likeCount, setLikeCount] = useState(data._count.likes);
+
+	useEffect(() => {
+		setLiked(likeQuery.data && likeQuery.data > 0);
+	}, [likeQuery.data]);
 
 	const toggleLike = async () => {
 		const result = await likeMutation.mutateAsync({
