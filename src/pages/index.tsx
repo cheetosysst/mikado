@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Layout from "~/components/layouts/main.layout";
 import Image from "next/image";
 import { Heart, MessageSquare, Repeat } from "lucide-react";
@@ -40,12 +40,19 @@ const Home: NextPage = () => {
 
 const TweetItem = ({ data }: { data: TweetData }) => {
 	const likeMutation = api.tweet.toggleLike.useMutation();
+	const { user } = useUser();
 
-	const toggleLike = () => {
-		likeMutation.mutate({
-			user: data.user,
+	// TODO change to reducer
+	const [liked, setLiked] = useState(data.likes.length > 0);
+	const [likeCount, setLikeCount] = useState(data.likes.length);
+
+	const toggleLike = async () => {
+		const result = await likeMutation.mutateAsync({
+			user: user?.id || "",
 			tweet: data.id,
 		});
+		setLiked(result);
+		setLikeCount(result ? likeCount + 1 : likeCount - 1);
 	};
 
 	return (
@@ -82,13 +89,13 @@ const TweetItem = ({ data }: { data: TweetData }) => {
 					<span className="group flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white group-hover:drop-shadow-lg">
 						<Heart
 							className={`transition-all ${
-								data.likes.length
+								liked
 									? "text-red-600 group-hover:text-red-500"
 									: "text-white/70 group-hover:text-white"
 							}`}
 							size={20}
 						/>
-						{data._count.likes}
+						{likeCount}
 					</span>
 				</Link>
 			</div>

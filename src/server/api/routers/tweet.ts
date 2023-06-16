@@ -60,13 +60,13 @@ export const tweetAPI = createTRPCRouter({
 					await tx.tweetLike.deleteMany({
 						where: { user: input.user, tweetId: input.tweet },
 					});
-					return "unlike";
+					return false;
 				}
 
 				await tx.tweetLike.create({
 					data: { user: input.user, tweetId: input.tweet },
 				});
-				return "liked";
+				return true;
 			})
 		),
 
