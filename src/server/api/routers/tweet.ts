@@ -74,7 +74,7 @@ export const tweetAPI = createTRPCRouter({
 		),
 
 	newPost: protectedProcedure
-		.input(z.object({ content: z.string(), user: z.string() }))
+		.input(z.object({ content: z.string().nonempty(), user: z.string() }))
 		.mutation(({ ctx, input }) => {
 			return ctx.prisma.$transaction(async (tx) => {
 				const tweet = await tx.tweet.create({

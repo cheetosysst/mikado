@@ -129,6 +129,7 @@ const Composer = () => {
 			return;
 
 		const content = ref.current.innerText;
+		if (!content.length) return;
 
 		tweetMutation.mutate({
 			user: user.id,
