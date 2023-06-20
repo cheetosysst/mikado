@@ -1,19 +1,43 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Ref, useEffect, useRef, useState } from "react";
 import Layout from "~/components/layouts/main.layout";
 import Image from "next/image";
-import { Heart, MessageSquare, Repeat } from "lucide-react";
+import { Heart, LoaderIcon, MessageSquare, Repeat } from "lucide-react";
 import { api } from "~/utils/api";
 import { useUser } from "@clerk/nextjs";
 import type { TweetData } from "~/server/api/routers/tweet";
 import Link from "next/link";
+import { useIntersection } from "@mantine/hooks";
 
 const Home: NextPage = () => {
-	const { user } = useUser();
-	const tweetList: TweetData[] | undefined = api.tweet.getTweets.useQuery({
-		user: user?.id || "",
-	}).data;
+	const { data, fetchNextPage, isFetchingNextPage } =
+		api.tweet.getTweetsInfinite.useInfiniteQuery(
+			{ limit: 10 },
+			{
+				getNextPageParam: (lastpage) => {
+					const lastItem = lastpage[lastpage.length - 1];
+					return lastItem?.time.toISOString() || undefined;
+				},
+				initialCursor: new Date().toISOString(),
+			}
+		);
+	const tweetList: TweetData[] | undefined = data?.pages.flatMap(
+		(item) => item
+	);
+
+	const lastPosRef = useRef<HTMLElement>(null);
+	const { ref, entry } = useIntersection({
+		root: lastPosRef.current,
+		threshold: 1,
+	});
+
+	useEffect(() => {
+		if (entry?.isIntersecting) {
+			Promise.all([fetchNextPage()]).catch((err) => console.error(err));
+			return;
+		}
+	}, [entry, fetchNextPage]);
 
 	return (
 		<>
@@ -33,13 +57,21 @@ const Home: NextPage = () => {
 								key={`post-${item.id}-${index}`}
 							/>
 						))}
+					<div
+						className="min-h-10 mb-10 flex h-10 w-full justify-center"
+						ref={ref}
+					>
+						{isFetchingNextPage ? (
+							<LoaderIcon className=" animate-spin" />
+						) : undefined}
+					</div>
 				</div>
 			</Layout>
 		</>
 	);
 };
 
-const TweetItem = ({ data }: { data: TweetData }) => {
+const TweetItem = ({ data, ...props }: { data: TweetData }) => {
 	const likeMutation = api.tweet.toggleLike.useMutation();
 	const { user } = useUser();
 	const likeQuery = api.tweet.likeState.useQuery({
@@ -65,7 +97,10 @@ const TweetItem = ({ data }: { data: TweetData }) => {
 	};
 
 	return (
-		<div className="py-4 drop-shadow-md transition-all hover:drop-shadow-lg">
+		<div
+			className="py-4 drop-shadow-md transition-all hover:drop-shadow-lg"
+			{...props}
+		>
 			<div className="flex gap-2 px-6">
 				<div className="shrink-0 ">
 					<Image
@@ -91,8 +126,7 @@ const TweetItem = ({ data }: { data: TweetData }) => {
 					{data._count.children}
 				</span>
 				<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-					<Repeat size={20} />
-					{/* {data.repostCount} */}0
+					<Repeat size={20} />0
 				</span>
 				{/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
 				<Link href={"#"} onClick={toggleLike}>

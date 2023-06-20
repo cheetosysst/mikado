@@ -17,31 +17,48 @@ export type TweetData = Tweet & {
 };
 
 export const tweetAPI = createTRPCRouter({
-	getTweets: publicProcedure
-		.input(z.object({ user: z.string().default("").optional() }))
+	getTweetsInfinite: publicProcedure
+		.input(
+			z.object({
+				limit: z.number().min(0).max(100),
+				cursor: z.string(),
+			})
+		)
 		.query(async ({ ctx, input }) => {
-			const tweets: TweetData[] = await ctx.prisma.tweet.findMany({
+			const { limit, cursor } = input;
+			const items: TweetData[] = await ctx.prisma.tweet.findMany({
+				take: limit + 1,
+				where: { time: { lt: new Date(cursor || 0) } },
 				include: {
 					content: true,
-					_count: {
-						select: {
-							likes: true,
-							children: true,
-						},
-					},
+					_count: { select: { likes: true, children: true } },
 				},
-				take: 100,
-				orderBy: {
-					time: "desc",
-				},
+				orderBy: { time: "desc" },
 			});
-			for (const item of tweets) {
+			for (const item of items) {
 				const user = await clerkClient.users.getUser(item.user);
 				item.user = user.username || "";
 				item.avatar = user.imageUrl;
 			}
-			return tweets;
+			return items;
 		}),
+
+	getTweets: publicProcedure.query(async ({ ctx }) => {
+		const tweets: TweetData[] = await ctx.prisma.tweet.findMany({
+			include: {
+				content: true,
+				_count: { select: { likes: true, children: true } },
+			},
+			take: 100,
+			orderBy: { time: "desc" },
+		});
+		for (const item of tweets) {
+			const user = await clerkClient.users.getUser(item.user);
+			item.user = user.username || "";
+			item.avatar = user.imageUrl;
+		}
+		return tweets;
+	}),
 
 	toggleLike: protectedProcedure
 		.input(z.object({ user: z.string(), tweet: z.string() }))
