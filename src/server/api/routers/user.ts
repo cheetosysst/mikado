@@ -8,7 +8,6 @@ export const userAPI = createTRPCRouter({
 		.query(async ({ input }) => {
 			const { id } = input;
 			const user = await clerkClient.users.getUser(id);
-			console.log(id, user);
 			return user;
 		}),
 });
