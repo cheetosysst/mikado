@@ -13,7 +13,6 @@ export type TweetData = Tweet & {
 		likes: number;
 		children: number;
 	};
-	avatar?: string;
 };
 
 export const tweetAPI = createTRPCRouter({
@@ -35,30 +34,8 @@ export const tweetAPI = createTRPCRouter({
 				},
 				orderBy: { time: "desc" },
 			});
-			for (const item of items) {
-				const user = await clerkClient.users.getUser(item.user);
-				item.user = user.username || "";
-				item.avatar = user.imageUrl;
-			}
 			return items;
 		}),
-
-	getTweets: publicProcedure.query(async ({ ctx }) => {
-		const tweets: TweetData[] = await ctx.prisma.tweet.findMany({
-			include: {
-				content: true,
-				_count: { select: { likes: true, children: true } },
-			},
-			take: 100,
-			orderBy: { time: "desc" },
-		});
-		for (const item of tweets) {
-			const user = await clerkClient.users.getUser(item.user);
-			item.user = user.username || "";
-			item.avatar = user.imageUrl;
-		}
-		return tweets;
-	}),
 
 	toggleLike: protectedProcedure
 		.input(z.object({ user: z.string(), tweet: z.string() }))
