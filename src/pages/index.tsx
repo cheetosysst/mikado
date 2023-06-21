@@ -5,7 +5,7 @@ import Layout from "~/components/layouts/main.layout";
 import Image from "next/image";
 import { Heart, LoaderIcon, MessageSquare, Repeat } from "lucide-react";
 import { api } from "~/utils/api";
-import { useUser } from "@clerk/nextjs";
+import { clerkClient, useUser } from "@clerk/nextjs";
 import type { TweetData } from "~/server/api/routers/tweet";
 import Link from "next/link";
 import { useIntersection } from "@mantine/hooks";
@@ -13,7 +13,7 @@ import { useIntersection } from "@mantine/hooks";
 const Home: NextPage = () => {
 	const { data, fetchNextPage, isFetchingNextPage } =
 		api.tweet.getTweetsInfinite.useInfiniteQuery(
-			{ limit: 10 },
+			{ limit: 5 },
 			{
 				getNextPageParam: (lastpage) => {
 					const lastItem = lastpage[lastpage.length - 1];
@@ -78,6 +78,7 @@ const TweetItem = ({ data, ...props }: { data: TweetData }) => {
 		user: user?.id || "",
 		tweet: data.id,
 	});
+	const author = api.user.getUser.useQuery({ id: data.user }).data;
 
 	// TODO change to reducer
 	const [liked, setLiked] = useState(likeQuery.data && likeQuery.data > 0);
@@ -97,30 +98,31 @@ const TweetItem = ({ data, ...props }: { data: TweetData }) => {
 	};
 
 	return (
-		<div
-			className="py-4 drop-shadow-md transition-all hover:drop-shadow-lg"
-			{...props}
-		>
+		<div className="py-4" {...props}>
 			<div className="flex gap-2 px-6">
 				<div className="shrink-0 ">
 					<Image
-						src={data.avatar || `/user.jpg`}
+						src={author?.imageUrl || `/user.jpg`}
 						width={42}
 						height={42}
-						className="rounded-full drop-shadow-md"
+						className="rounded-full border-[1px] border-white/30"
 						alt="user avatar"
 					/>
 				</div>
 				<div className="flex grow flex-col">
-					<span className="text-semibold my-1 text-xl text-white drop-shadow-sm">
-						@ {data.user}
+					<span className="text-semibold my-1 text-xl leading-4 text-white drop-shadow-sm">
+						{author?.firstName || author?.lastName || "User"}
+						<br />
+						<span className="text-sm text-white/50">
+							@{author?.username}
+						</span>
 					</span>
-					<div className="text-white drop-shadow-md">
-						{data.content?.content}
-					</div>
 				</div>
 			</div>
-			<div className="mt-2 flex flex-row justify-around">
+			<div className="mb-4 mt-2 flex px-8 text-white ">
+				{data.content?.content}
+			</div>
+			<div className="mt-2 flex flex-row justify-between px-8">
 				<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
 					<MessageSquare size={20} />
 					{data._count.children}

@@ -23,7 +23,7 @@ const mockTrends: Array<TrendType> = [
 ];
 
 const Layout = ({ children }: { children?: ReactNode }) => (
-	<div className="bg-animation flex h-screen gap-0 pr-4 sm:gap-4 lg:px-0">
+	<div className="bg-animation flex h-[100dvh] gap-0 pr-4 sm:gap-4 lg:px-0">
 		<div className="my-4 flex w-14 grow-0 flex-col items-center gap-4 md:items-end lg:grow">
 			<Link href={`#`}>
 				<span className="hidden w-full pr-1 text-4xl font-bold uppercase text-transparent text-white transition-all duration-500 ease-in hover:text-cyan-300 hover:drop-shadow-lg lg:block">
@@ -46,22 +46,22 @@ const Layout = ({ children }: { children?: ReactNode }) => (
 				<NavLink name="logout" icon={<LogOut size={32} />} href="" />
 			</div>
 		</div>
-		<GlassBase className="my-4 max-h-screen w-3/5 grow overflow-hidden pb-24 lg:w-1/3 lg:grow-0">
+		<DefaultBase className="my-4 max-h-screen w-3/5 grow overflow-hidden pb-24 lg:w-1/3 lg:grow-0">
 			{children}
-		</GlassBase>
+		</DefaultBase>
 		<div className="mt-4 hidden w-14 grow flex-col gap-4 lg:flex">
-			<GlassBase className="w-60 shrink p-3 focus-within:border-white/50">
+			<DefaultBase className="w-60 shrink p-3 focus-within:border-white/50">
 				<input
 					type="text"
 					placeholder="Search"
 					className="bg-transparent outline-none placeholder:text-white/60"
 				/>
-			</GlassBase>
-			<GlassBase className="mb-4 w-60 shrink grow p-2">
+			</DefaultBase>
+			<DefaultBase className="mb-4 w-60 shrink grow p-2">
 				<h1 className="mb-2 pl-2 text-2xl capitalize">trends</h1>
 				<hr className="border-white/50" />
 				<Trends />
-			</GlassBase>
+			</DefaultBase>
 		</div>
 	</div>
 );
@@ -121,7 +121,7 @@ const NavLink = ({
 	</Link>
 );
 
-export const GlassBase = ({
+export const PanelBase = ({
 	children,
 	className,
 }: {
@@ -129,10 +129,42 @@ export const GlassBase = ({
 	className?: string;
 }) => (
 	<div
-		className={`rounded-xl border-[1px] border-white/10 bg-white/10 text-white drop-shadow-lg backdrop-blur-sm backdrop-saturate-[1.2] transition-all hover:drop-shadow-xl hover:backdrop-saturate-[1.3] ${
-			className ? className : ""
+		className={`rounded-xl border-[1px] border-white/10 bg-slate-900/20 text-white   ${
+			className || ""
 		}`}
 	>
 		{children}
 	</div>
+);
+
+export const GlassBase = ({
+	children,
+	className,
+}: {
+	children?: ReactNode;
+	className?: string;
+}) => (
+	<PanelBase
+		className={`drop-shadow-lg backdrop-blur-sm backdrop-saturate-100 transition-all hover:drop-shadow-xl hover:backdrop-saturate-[1.3] ${
+			className || ""
+		}`}
+	>
+		{children}
+	</PanelBase>
+);
+
+export const DefaultBase = ({
+	children,
+	className,
+}: {
+	children?: ReactNode;
+	className?: string;
+}) => (
+	<PanelBase
+		className={`drop-shadow-lg transition-all hover:drop-shadow-lg ${
+			className || ""
+		}`}
+	>
+		{children}
+	</PanelBase>
 );
