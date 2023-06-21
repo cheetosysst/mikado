@@ -23,13 +23,13 @@ const mockTrends: Array<TrendType> = [
 ];
 
 const Layout = ({ children }: { children?: ReactNode }) => (
-	<div className="bg-animation flex h-[100dvh] gap-0 pr-4 sm:gap-4 lg:px-0">
+	<div className="flex h-[100dvh] gap-0 bg-zinc-900 pr-4 sm:gap-4 lg:px-0">
 		<div className="my-4 flex w-14 grow-0 flex-col items-center gap-4 md:items-end lg:grow">
 			<Link href={`#`}>
-				<span className="hidden w-full pr-1 text-4xl font-bold uppercase text-transparent text-white transition-all duration-500 ease-in hover:text-cyan-300 hover:drop-shadow-lg lg:block">
+				<span className="hidden w-full pr-1 text-4xl font-bold uppercase text-transparent text-white transition-all duration-150 hover:text-cyan-300 hover:duration-300 lg:block">
 					mikado
 				</span>
-				<span className="block text-3xl font-bold uppercase text-transparent text-white transition-all duration-500 ease-in hover:text-cyan-300 lg:hidden">
+				<span className="block text-3xl font-bold uppercase text-transparent text-white transition-all duration-150 hover:text-cyan-300 hover:duration-300 lg:hidden">
 					<Bird size={36} />
 				</span>
 			</Link>
@@ -50,7 +50,7 @@ const Layout = ({ children }: { children?: ReactNode }) => (
 			{children}
 		</DefaultBase>
 		<div className="mt-4 hidden w-14 grow flex-col gap-4 lg:flex">
-			<DefaultBase className="w-60 shrink p-3 focus-within:border-white/50">
+			<DefaultBase className="w-60 shrink p-3 focus-within:border-white/50 hover:border-zinc-600">
 				<input
 					type="text"
 					placeholder="Search"
@@ -59,7 +59,7 @@ const Layout = ({ children }: { children?: ReactNode }) => (
 			</DefaultBase>
 			<DefaultBase className="mb-4 w-60 shrink grow p-2">
 				<h1 className="mb-2 pl-2 text-2xl capitalize">trends</h1>
-				<hr className="border-white/50" />
+				<hr className="border-zinc-600/80" />
 				<Trends />
 			</DefaultBase>
 		</div>
@@ -84,7 +84,7 @@ const Trends = () => {
 const TrendItem = ({ item, ...props }: { item: TrendType }) => (
 	<>
 		<Link href={item.url}>
-			<div className="group bg-transparent p-2 transition-colors hover:bg-black/10 hover:saturate-100">
+			<div className="group bg-transparent p-2 transition-colors hover:bg-slate-500/10 hover:saturate-100">
 				<h3 className="text-xl text-white/80 transition-colors group-hover:text-white">
 					{item.title}
 				</h3>
@@ -98,7 +98,7 @@ const TrendItem = ({ item, ...props }: { item: TrendType }) => (
 				</span>
 			</div>
 		</Link>
-		<hr className="border-white/30" />
+		<hr className="border-zinc-600/50" />
 	</>
 );
 
@@ -114,7 +114,7 @@ const NavLink = ({
 	onClick?: MouseEventHandler;
 }) => (
 	<Link href={href} onClick={onClick}>
-		<div className="flex w-full justify-around gap-3 rounded-lg p-2 uppercase text-transparent text-white transition-all duration-500 ease-out hover:bg-black/10 hover:text-cyan-300 hover:drop-shadow-lg">
+		<div className="flex w-full justify-around gap-3 rounded-lg p-2 uppercase text-white transition-all duration-75 hover:bg-zinc-400/10 hover:duration-100">
 			<span className="blockfont-bold">{icon}</span>
 			<span className="hidden text-2xl lg:block">{name}</span>
 		</div>
@@ -129,28 +129,12 @@ export const PanelBase = ({
 	className?: string;
 }) => (
 	<div
-		className={`rounded-xl border-[1px] border-white/10 bg-slate-900/20 text-white   ${
+		className={`rounded-xl border-[1px] border-zinc-600/20 bg-slate-700/10 text-white ${
 			className || ""
 		}`}
 	>
 		{children}
 	</div>
-);
-
-export const GlassBase = ({
-	children,
-	className,
-}: {
-	children?: ReactNode;
-	className?: string;
-}) => (
-	<PanelBase
-		className={`drop-shadow-lg backdrop-blur-sm backdrop-saturate-100 transition-all hover:drop-shadow-xl hover:backdrop-saturate-[1.3] ${
-			className || ""
-		}`}
-	>
-		{children}
-	</PanelBase>
 );
 
 export const DefaultBase = ({
@@ -160,11 +144,7 @@ export const DefaultBase = ({
 	children?: ReactNode;
 	className?: string;
 }) => (
-	<PanelBase
-		className={`drop-shadow-lg transition-all hover:drop-shadow-lg ${
-			className || ""
-		}`}
-	>
+	<PanelBase className={`bg-zinc-800/40 transition-all ${className || ""}`}>
 		{children}
 	</PanelBase>
 );

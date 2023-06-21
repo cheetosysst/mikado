@@ -48,8 +48,8 @@ const Home: NextPage = () => {
 			</Head>
 			<Layout>
 				<Composer />
-				<hr className="border-white/50" />
-				<div className="flex max-h-full flex-col overflow-x-hidden overflow-y-scroll scroll-smooth">
+				<hr className="border-white/10" />
+				<div className="flex max-h-full flex-col overflow-x-hidden overflow-y-scroll">
 					{tweetList &&
 						tweetList?.map((item, index) => (
 							<TweetItem
@@ -62,7 +62,7 @@ const Home: NextPage = () => {
 						ref={ref}
 					>
 						{isFetchingNextPage ? (
-							<LoaderIcon className=" animate-spin" />
+							<LoaderIcon className="animate-spin-slow" />
 						) : undefined}
 					</div>
 				</div>
@@ -105,12 +105,12 @@ const TweetItem = ({ data, ...props }: { data: TweetData }) => {
 						src={author?.imageUrl || `/user.jpg`}
 						width={42}
 						height={42}
-						className="rounded-full border-[1px] border-white/30"
+						className="rounded-full border-[1px] border-white/30 drop-shadow-sm"
 						alt="user avatar"
 					/>
 				</div>
 				<div className="flex grow flex-col">
-					<span className="text-semibold my-1 text-xl leading-4 text-white drop-shadow-sm">
+					<span className="text-semibold my-1 text-xl leading-4 text-white">
 						{author?.firstName || author?.lastName || "User"}
 						<br />
 						<span className="text-sm text-white/50">
@@ -123,25 +123,40 @@ const TweetItem = ({ data, ...props }: { data: TweetData }) => {
 				{data.content?.content}
 			</div>
 			<div className="mt-2 flex flex-row justify-between px-8">
-				<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-					<MessageSquare size={20} />
-					{data._count.children}
+				<span className="group flex items-center gap-2 text-white/70 transition-all hover:text-white ">
+					<span className="relative h-5 w-5">
+						<MessageSquare
+							size={20}
+							className="absolute transition-all group-hover:scale-110"
+						/>
+					</span>
+					<span className="cursor-default">
+						{data._count.children}
+					</span>
 				</span>
-				<span className="flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white hover:drop-shadow-lg">
-					<Repeat size={20} />0
+				<span className="group flex items-center gap-2 text-white/70 transition-all hover:text-white ">
+					<span className="relative h-5 w-5">
+						<Repeat
+							size={20}
+							className="relative transition-all group-hover:scale-110"
+						/>
+					</span>
+					<span className="cursor-default">0</span>
 				</span>
 				{/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
 				<Link href={"#"} onClick={toggleLike}>
-					<span className="group flex items-center gap-2 text-white/70 drop-shadow-md transition-all hover:text-white group-hover:drop-shadow-lg">
-						<Heart
-							className={`transition-all ${
-								liked
-									? "text-red-600 group-hover:text-red-500"
-									: "text-white/70 group-hover:text-white"
-							}`}
-							size={20}
-						/>
-						{likeCount}
+					<span className="group relative flex items-center gap-2 text-white/70 transition-all hover:text-white">
+						<span className="relative h-5 w-5">
+							<Heart
+								className={`absolute transition-all focus:text-white/70 group-hover:scale-110 ${
+									liked
+										? "text-rose-500 group-hover:text-white"
+										: "text-white/70 group-hover:text-rose-400"
+								}`}
+								size={20}
+							/>
+						</span>
+						<span className="cursor-default">{likeCount}</span>
 					</span>
 				</Link>
 			</div>
@@ -178,7 +193,7 @@ const Composer = () => {
 	};
 
 	return (
-		<div className="h-min-40 group flex flex-col p-4 transition-all hover:bg-white/20">
+		<div className="h-min-40 group flex flex-col p-4 transition-all hover:bg-zinc-500/20">
 			<div
 				contentEditable
 				placeholder="New Post"
@@ -188,7 +203,7 @@ const Composer = () => {
 			<div className="shirnk-0 cursor-text" onClick={focusHandler}>
 				<button
 					onClick={submitPost}
-					className="float-right rounded-lg bg-white/50 p-2 capitalize text-black/40 drop-shadow-lg transition-all hover:bg-white/80 hover:text-black/60 hover:drop-shadow-xl group-focus-within:bg-white/70 group-focus-within:text-black/60"
+					className="float-right rounded-lg bg-white/50 p-2 capitalize text-gray-900 transition-all hover:bg-white/80 hover:text-black/60 group-focus-within:bg-white/70 group-focus-within:text-black/60"
 				>
 					post
 				</button>
